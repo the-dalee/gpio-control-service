@@ -1,0 +1,74 @@
+openapi: 3.0.1
+info:
+  title: Sample API
+  description: API description in Markdown.
+  version: 1.0.0
+servers:
+  - url: 'https://api.example.com'
+paths:
+  /pins/{gpio_pin}:
+    get:
+      summary: Returns status of the pin
+      responses:
+        '200':
+          description: foo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PinStatus'
+    put:
+      summary: Sets the status of the pin
+      parameters:
+        - in: path
+          name: gpio_pin
+          description: foo
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Pin status was updated successfully.
+        '400':
+          description: >
+            Pin status could not be updated, See property `description` for further details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+components:
+  schemas:
+    PinStatus:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - 'INPUT'
+            - 'OUTPUT'
+            - 'GPIO_CLOCK'
+            - 'UNUSED'
+        pull_up_dn:
+          type: string
+          enum:
+            - 'PULL_UP'
+            - 'PULL_DOWN'
+            - 'OFF'
+        value:
+          type: string
+          enum:
+            - 'HIGH'
+            - 'LOW'
+            - 'UNSPECIFIED'
+
+    Problem:
+      type: object
+      properties:
+        details:
+          type: string
+          description: Human readable description of the error
+        cause:
+          type: string
+          description: Enum representing cause of the error (if known).
+          enum:
+            - PULL_USED_ON_OUTPUT
